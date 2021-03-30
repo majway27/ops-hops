@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+/*@import "~@angular/material/prebuilt-themes/indigo-pink.css";*/
+
+/*$ops-hops-green: #98B06F
+$ops-hops-black: #424242
+$ops-hops-blacker: #3D3D3D
+$ops-hops-orange: #FF6600
+$ops-hops-white: #ECF1E5 */
 
 html, body {
 	height: 100%;

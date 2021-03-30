@@ -61,7 +61,8 @@ export class GraphViz {
   get selectLinks() {
     const all_links = this.graphRoot.selectAll('.active_edge')
       .data(this.linkModels, (n) => {
-        return n.id;
+        return n.id.relationId;
+        //return n.id;
       });
     return all_links;
   }
@@ -69,7 +70,8 @@ export class GraphViz {
   get selectEdgePaths() {
     const all_edgepaths = this.graphRoot.selectAll('.active_edgepath')
       .data(this.linkModels, (n) => {
-        return n.id;
+        return n.id.relationId;
+        //return n.id;
       });
     return all_edgepaths;
   }
@@ -77,7 +79,8 @@ export class GraphViz {
   get selectEdgeLabels() {
     const all_edgelabels = this.graphRoot.selectAll('.active_edgelabel')
       .data(this.linkModels, (n) => {
-        return n.id;
+        return n.id.relationId;
+        //return n.id;
       });
     return all_edgelabels;
   }
@@ -152,23 +155,25 @@ export class GraphViz {
   refreshData(arrangedData: ArrangedGraphData, center_f, with_active_node) {
     // Main visualization function
     const svg_graph = this.graphRoot;
-    this._graphLayers.push_layers();
+    //this._graphLayers.push_layers();
     this._graphLayers.update_data(arrangedData);
 
+    //console.log('arrangedData-refreshData')
+    //console.log(arrangedData)
     this._graphLinks.update(arrangedData);
 
     this._graphNodes.update(arrangedData);
 
     //////////////////////////////////
     // Additional clean up
-    this._graphShapes.decorate_old_elements(this._graphLayers.depth());
-    svg_graph.selectAll('g').filter('.pinned').moveToFront();
+    //this._graphShapes.decorate_old_elements(this._graphLayers.depth());
+    //svg_graph.selectAll('g').filter('.pinned').moveToFront();
 
 
-    this._graphLayers.remove_duplicates('.active_node', '.old_node');
-    this._graphLayers.remove_duplicates('.active_edge', '.old_edge');
-    this._graphLayers.remove_duplicates('.active_edgepath', '.old_edgepath');
-    this._graphLayers.remove_duplicates('.active_edgelabel', '.old_edgelabel');
+    //this._graphLayers.remove_duplicates('.active_node', '.old_node');
+    //this._graphLayers.remove_duplicates('.active_edge', '.old_edge');
+    //this._graphLayers.remove_duplicates('.active_edgepath', '.old_edgepath');
+    //this._graphLayers.remove_duplicates('.active_edgelabel', '.old_edgelabel');
 
 
     // Force simulation simulation model and paramers Associate the simulation with the data
@@ -177,6 +182,9 @@ export class GraphViz {
       this._graphNodes.tick();
       this._graphLinks.tick();
     });
+    //console.log('start force')
+    //console.log('using linkModels: ')
+    //console.log(this.linkModels)
     this._simulation.force('link').links(this.linkModels);
     this._simulation.alphaTarget(0);
 

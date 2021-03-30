@@ -8,7 +8,7 @@ import {D3Node} from './nodes/d3Node';
 import { GremlinLink } from './nodes/gremlinLink';
 import {GremlinNode} from './nodes/gremlinNode';
 import {Component, OnInit, Input, ViewEncapsulation} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatDialogConfig} from '@angular/material';
 import {GremlinService, GremlinClientOptions, GremlinQuery} from '@savantly/gremlin-js';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import * as d3 from 'd3';
@@ -91,10 +91,18 @@ export class GraphexpComponent implements OnInit {
   }
 
   openLinkEditDialog(item: GremlinLink) {
-    const dialogRef = this.dialog.open(LinkEditComponent, {
+
+    const dialogConfigLinkEdit = new MatDialogConfig();
+    dialogConfigLinkEdit.data = {labels: this.linkLabels, item: item};
+    dialogConfigLinkEdit.panelClass="sv-menu-form-field-overlay"
+
+    const dialogRef = this.dialog.open(LinkEditComponent, 
+      dialogConfigLinkEdit);
+
+    /*const dialogRef = this.dialog.open(LinkEditComponent, {
       width: '30em',
       data: {labels: this.linkLabels, item: item}
-    });
+    });*/
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
@@ -105,11 +113,19 @@ export class GraphexpComponent implements OnInit {
   }
 
   openNodeEditDialog(item?: GremlinNode) {
+
+    const dialogConfigNodeEdit = new MatDialogConfig();
+        
     item = item || new GremlinNode();
-    const dialogRef = this.dialog.open(NodeEditComponent, {
+    dialogConfigNodeEdit.data = {labels: this.nodeLabels, item: item};
+    dialogConfigNodeEdit.panelClass="sv-menu-form-field-overlay"
+
+    const dialogRef = this.dialog.open(NodeEditComponent, 
+      dialogConfigNodeEdit);
+
+    /*const dialogRef = this.dialog.open(NodeEditComponent, {
       width: '30em',
-      data: {labels: this.nodeLabels, item: item}
-    });
+      data: {labels: this.nodeLabels, item: item}});*/
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
@@ -132,8 +148,10 @@ export class GraphexpComponent implements OnInit {
   }
 
   search() {
-    console.log(`searching field: ${this.searchField}, value: ${this.searchValue}`);
+    //console.log(`searching field: ${this.searchField}, value: ${this.searchValue}`);
     this.graphexpService.queryNodes(this.searchField, this.searchValue).then(data => {
+      //console.log('refreshing data')
+      //console.log(data)
       this.graphViz.refreshData(data, 1, null);
     }).catch((err) => {
       console.error(err);
@@ -153,19 +171,12 @@ export class GraphexpComponent implements OnInit {
     return props;
   }
 
-  showNames() {
-  }
-
   setNumberOfLayers() {
     this.graphConfig.numberOfLayers = this.numberOfLayers;
   }
 
   clearGraph() {
     this.graphViz.clear();
-  }
-
-  toggleGraphInfo() {
-    this.showGraphInfo = !this.showGraphInfo;
   }
 
   getGraphInfo() {

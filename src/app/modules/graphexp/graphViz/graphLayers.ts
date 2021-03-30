@@ -68,7 +68,6 @@ export class GraphLayers {
     // retrieve the links between nodes and pinned nodes
     this._Links = d.links.concat(previous_links_data); // first gather the links
     this._Links = this.find_active_links(this._Links, this._Nodes); // then find the ones that are between active nodes
-
   }
 
   updateAdd(array1: D3Node[], array2: D3Node[]) {
@@ -98,7 +97,17 @@ export class GraphLayers {
     list_of_links.forEach((row) => {
       for (let i = 0; i < active_nodes.length; i++) {
         for (let j = 0; j < active_nodes.length; j++) {
-          if (active_nodes[i].id === row.source.id && active_nodes[j].id === row.target.id) {
+          if (row.source.id && row.target.id) {
+            const L_data = new D3Node(row);
+            L_data.source = row.source.id;
+            L_data.target = row.target.id;
+            active_links = active_links.concat(L_data);
+          } else if (row.source && row.target) {
+            const L_data = row;
+            active_links = active_links.concat(L_data);
+          }
+          //console.log('AL final: ' + JSON.stringify(active_links))
+          /*if (active_nodes[i].id === row.source.id && active_nodes[j].id === row.target.id) {
             const L_data = new D3Node(row);
             L_data.source = row.source.id;
             L_data.target = row.target.id;
@@ -106,7 +115,7 @@ export class GraphLayers {
           } else if (active_nodes[i].id === row.source && active_nodes[j].id === row.target) {
             const L_data = row;
             active_links = active_links.concat(L_data);
-          }
+          }*/
         }
       }
     });
@@ -114,7 +123,7 @@ export class GraphLayers {
     // remove duplicates links
     const dic = {};
     for (let i = 0; i < active_links.length; i++) {
-      dic[active_links[i].id] = active_links[i]; // this will remove the duplicate links (with same id)
+      dic[active_links[i].id.relationId] = active_links[i]; // this will remove the duplicate links (with same id)
     }
     const list_of_active_links = [];
     for (const key of Object.keys(dic)) {

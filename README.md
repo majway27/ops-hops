@@ -1,78 +1,29 @@
-# ngx-graphexp
-GraphExp plugin for Angular  
-Inspired by [GraphExp](https://github.com/bricaud/graphexp)  
+# ops-hops
 
+## Purpose
 
-## Installation  
-yarn -  
+- Janusgraph UI client.  Angular, Material, D3.js, Gremlin.  Based on significant work by @savantly/ngx-graphexp (huge thanks!).
+- POC for a software support team to logically map components, capabilies, signals of a complex system to surface not-obvious relationships and implications of state variations.
 
-    yarn add @savantly/ngx-graphexp
+## Features
 
-npm -  
+- Differs from forked sourced project via the following:
+	- Modifications applied resulting in a working JanusGraph 0.5.2 client.
+	- UI overhaul
+	- Architectual changes to show all nodes+edges, disable layers.
 
-    npm install @savantly/ngx-graphexp  
+## Current Issues
 
-
-## Demo app  
-[Demo](./examples/app)  
-
-
-## Usage  
-Import the required modules into your application  
-
-    import { GraphexpModule, GraphexpService } from '@savantly/ngx-graphexp';
-    import { GremlinClientOptions } from '@savantly/gremlin-js';  
-
-Create an instance of the GraphexpService, passing in a configuration object -  
-
-    export const graphexpService = new GraphexpService(new GremlinClientOptions());  
-    
-Use the component in your application, passing in custom options -  
-
-    import { GraphConfig, GraphexpService } from '@savantly/ngx-graphexp';
-	import { Component } from '@angular/core';
-	
-	@Component({
-	  selector: 'sv-root',
-	  template: '<sv-graphexp [graphexpService]="service" [graphConfig]="graphConfig"></sv-graphexp>',
-	  styleUrls: ['./app.component.css']
-	})
-	export class AppComponent {
-	
-	  graphConfig: GraphConfig = new GraphConfig();
-	
-	  constructor (public service: GraphexpService) {
-	    this.graphConfig.nodeLabels = ['god', 'titan', 'demigod', 'human', 'monster', 'location'];
-	    this.graphConfig.linkLabels = ['is_father_of', 'has_pet', 'lives_in'];
-	  }
-	
-	}
-
+- Opportunity for performance tuning, 20-50 returned nodes has 2-4sec lag to render.
+- No demo available currently due to need for live JanusGraph backend.
 
 ## Default GraphConfig options   
 
-[graphConfig.ts](./src/app/modules/graphexp/graphViz/graphConfig.ts)  
+./src/app/modules/graphexp/graphViz/graphConfig.ts
 
 ## Default GremlinClientOptions  
 
-[gremlin.client.options.ts](https://github.com/savantly-net/gremlin-js/blob/master/src/gremlin/gremlin.client.options.ts)  
-
-
-## Screenshots 
-
-
-![example](./examples/example.png)  
-
-![menu](./examples/example_menu.png)  
-
-Select a label and add properties to the node  
-![create node](./examples/example_create_node.png)  
-
-shift-drag to create a new connection between nodes  
-![drag link](./examples/example_drag_link.png)  
-
-Select the label and add properties to the link  
-![create link](./examples/example_create_link.png)  
+./src/gremlin/gremlin.client.options.ts
 
 
 ## Build/Development

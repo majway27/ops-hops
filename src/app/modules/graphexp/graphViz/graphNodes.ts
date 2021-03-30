@@ -60,10 +60,10 @@ export class GraphNodes {
    * update the node data in the graph
    */
   update(arrangedData: ArrangedGraphData) {
-    console.log('GraphNodes#update');
+    //console.log('GraphNodes#update');
 
     // old nodes not active any more are tagged
-    this.graphNodes.exit().classed('old_node0', true).classed('active_node', false);
+    //this.graphNodes.exit().classed('old_node0', true).classed('active_node', false);
 
     // nodes associated to the data are constructed
     let nodes = this.graphNodes.enter();
@@ -89,29 +89,34 @@ export class GraphNodes {
     const node_base_circle = node_deco.append('circle').classed('base_circle', true)
       .attr('r', (d) => this.getNodeSize(d))
       .style('stroke-width', (d) => this.getNodeStrokeWidth(d))
-      .style('stroke', 'black')
+      //.style('stroke', 'black')
       .attr('fill', (d) => this.getNodeColor(d));
-    node_base_circle.append('title').text(d => this.getNodeText(d));
+    // hover
+    node_base_circle.append('title').text(d => this.getNodeHoverHelp(d));
 
-    // Add the text to the nodes
+    // Put short name over colored node circle
     node_deco.append('text').classed('text_details', true)
       .attr('x', (d) => {
-        return this.config.default_node_size + 2;
+        return this.config.default_node_size-16;
       })
+      .attr('y', 3)
+      .style('stroke', '#ECF1E5')
+      .attr('font-size', 6)
+      .text(d => this.getNodeShortLabel(d))
+
+    // Add instance text to node side
+    node_deco.append('text').classed('text_details', true)
+      .attr('x', (d) => {
+        return this.config.default_node_size + 8;
+        //return this.getNodeSize(d) + 2;
+      })
+      .attr('y', 2)
+      .attr('font-size', 12)
       .text(d => this.getNodeText(d))
-      .style('visibility', 'hidden');
-
-    node_deco.append('text').classed('text_details', true)
-      .attr('x', (d) => {
-        return this.config.default_node_size + 4;
-      })
-      .attr('y', this.config.default_node_size)
-      .text(d => this.getNodeSubText(d))
-      .style('visibility', 'hidden');
-
+      //.style('visibility', 'hidden');
 
     // Add the node pin
-    const node_pin = node_deco.append('circle').classed('Pin', true)
+    /*const node_pin = node_deco.append('circle').classed('Pin', true)
       .attr('r', (d) => {
         return this.config.default_node_size / 2;
       })
@@ -124,7 +129,7 @@ export class GraphNodes {
 
     node_pin.on('click', function(this, d) {
       _self.pinIt(this, d);
-    });
+    });*/
 
     // spot the active node and draw additional circle around it
     /* TODO: make active node different
@@ -140,9 +145,7 @@ export class GraphNodes {
             .moveToBack();
         }
       });
-    }
-     */
-
+    }*/
     return node_deco;
   }
 
@@ -175,16 +178,16 @@ export class GraphNodes {
     node.on('click', (ev) => {this.clicked(ev)})
       .on('mouseover', function() {
         d3.select(this).select('.Pin').style('visibility', 'visible');
-        d3.select(this).selectAll('.text_details').style('visibility', 'visible');
+        //d3.select(this).selectAll('.text_details').style('visibility', 'visible');
       })
       .on('mouseout', function() {
         const chosen_node = d3.select(this);
         if (!chosen_node.classed('pinned')) {
           d3.select(this).select('.Pin').style('visibility', 'hidden');
         }
-        if (!this.show_name) {
+        /*if (!this.show_name) {
           d3.select(this).selectAll('.text_details').style('visibility', 'hidden');
-        }
+        }*/
       });
   }
 
@@ -283,15 +286,14 @@ export class GraphNodes {
     this.simulation.stop();
     // remove the oldest links and nodes
     const stop_layer = this.graphViz.graphLayers.depth() - 1;
-    this.graphRoot.selectAll('.old_node' + stop_layer).remove();
-    this.graphRoot.selectAll('.old_edge' + stop_layer).remove();
-    this.graphRoot.selectAll('.old_edgepath' + stop_layer).remove();
-    this.graphRoot.selectAll('.old_edgelabel' + stop_layer).remove();
+    //this.graphRoot.selectAll('.old_node' + stop_layer).remove();
+    //this.graphRoot.selectAll('.old_edge' + stop_layer).remove();
+    //this.graphRoot.selectAll('.old_edgepath' + stop_layer).remove();
+    //this.graphRoot.selectAll('.old_edgelabel' + stop_layer).remove();
     this.graphViz.displayInfo(d);
-    this.graphViz.loadRelatedNodes(d);
-    console.log('node clicked')
+    //this.graphViz.loadRelatedNodes(d);
+    //console.log('node clicked')
   }
-
 
   pinIt(elem, data) {
     d3.event.stopPropagation();
@@ -356,8 +358,8 @@ export class GraphNodes {
   }
 
   getNodeSize(d) {
-    if ('size' in d) {
-      return d.size;
+    if ('size' in d.properties) {
+      return d.properties.size.summary;
     } else {
       return this.config.default_node_size;
     }
@@ -372,9 +374,15 @@ export class GraphNodes {
   }
 
   getNodeColor(d) {
-    return this.config.default_node_color;
-    /*
-    if (colored_prop !== 'none') {
+    //return this.config.default_node_color
+    if ('color' in d.properties) {
+      return d.properties.color[0].value;
+    } else {
+      //return this.default_node_color;
+      return this.config.default_node_color
+    }
+    
+    /*if (colored_prop !== 'none') {
       if (colored_prop === 'label') {
         return this.color_palette(node_code_color(d.label));
       } else if (typeof d.properties[colored_prop] !== 'undefined') {
@@ -392,28 +400,59 @@ export class GraphNodes {
       return d.properties.color[0].value;
     } else {
       return this.default_node_color;
-    } */
+    }*/ 
   }
 
-  getNodeTitle(d) {
-    if ('node_title' in d) {
-      return d.node_title;
+  // d3 calls this title
+  getNodeHoverHelp(d){
+    if ('node_hover_help' in d.properties) {
+      return d.properties.node_hover_help.summary;
+    } else {
+      return d.label;
+    }
+  }
+
+  // Short-hand for label, decorates inside of colored node circle
+  getNodeShortLabel(d) {
+    if ('node_short_name' in d.properties) {
+    //if ('node_title' in d.properties) {
+      return d.properties.node_short_name.summary;
+      //return d.properties.node_title.summary;
+    } else if (d.label === 'interrupt') {
+      return '??'
+    } else if (d.label === 'activity') {
+      return '++'
     } else {
       return d.label;
     }
   }
 
   getNodeText(d) {
-    if ('node_text' in d) {
-      return d.node_text;
+    //console.log(d.properties)
+    //if ('node_text' in d.properties) {
+    //if ('name' in d.properties) {
+      //return d.properties.node_text.summary;
+      //return d.properties.name.summary;
+    //} 
+    if ('caseid' in d.properties) {
+      return 'case id: ' + d.properties.caseid.summary;
+    } else if ('name' in d.properties) {
+      //if ('node_title' in d.properties) {
+        return d.properties.name.summary;
+        //return d.properties.node_title.summary;
     } else {
-      return d.id;
+      return d.label;
+      //return d.id;
     }
   }
 
+  getNodeLabel(d) {
+    return d.label;
+  }
+
   getNodeSubText(d) {
-    if ('node_subtext' in d) {
-      return d.node_subtext;
+    if ('node_subtext' in d.properties) {
+      return d.properties.node_subtext.summary;
     } else {
       return d.label;
     }

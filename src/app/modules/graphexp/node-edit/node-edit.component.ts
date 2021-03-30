@@ -12,6 +12,7 @@ export class NodeEditComponent implements OnInit {
 
   createProperty() {
     this.data.item.properties.push(new KV());
+    console.log("new prop: " + JSON.stringify(this.data.item))
   }
 
   constructor(

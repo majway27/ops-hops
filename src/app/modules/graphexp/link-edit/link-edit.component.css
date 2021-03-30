@@ -1,0 +1,8 @@
+mat-divider {
+	margin: 1em 0em 1em 0em;
+	border-top-color: var(--ops-hops-orange);
+	border-top-width: .4em;
+	/*border-top-style: groove;*/
+	border-style: groove;
+	border-radius: 8px;
+}

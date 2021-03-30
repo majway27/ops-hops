@@ -1,28 +1,97 @@
-<h2 mat-dialog-title>Edit Node</h2>
-<mat-dialog-content>
-	<div fxLayout fxLayoutAlign="start center" fxLayoutGap="1em">
-		<mat-input-container>
-			<mat-select [(ngModel)]="data.item.label" placeholder="Label">
-				<mat-option *ngFor="let item of data.labels" [value]="item">{{item}}</mat-option>
-			</mat-select>
-		</mat-input-container>
-		<div>
-			<button mat-raised-button (click)="createProperty()"><mat-icon>add</mat-icon>Add Property</button>
+<div fxLayout="column" fxLayoutAlign="start stretch" dir="ltr">
+
+	<!-- Menu Header -->
+	<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+		<button fxFlex="40" mat-dialog-close>
+			<mat-icon>clear</mat-icon>
+		</button>
+		
+		<span fxFlex="52" class="sv-menu-header">Edit Node</span>
+	</div>
+
+	<mat-divider></mat-divider>
+
+	<div fxLayout="column" fxLayoutAlign="start stretch" dir="ltr">
+		
+		<!-- Step 1 set type -->
+		<div class="sv-menu-tray">
+			<span class="sv-menu-tray-title">Type (1)</span>
+	
+			<div class="sv-menu-spacer"></div>
+
+			<div fxLayout="row" fxLayoutAlign="start center" dir="ltr">
+				<mat-input-container fxFlex="95" class="sv-menu-form-field" appearance="outline">
+					<mat-select [(ngModel)]="data.item.label" 
+					  disableOptionCentering panelClass="sv-menu-form-field-overlay-nodeedit">
+						<mat-option *ngFor="let item of data.labels" [value]="item">{{item}}</mat-option>
+					</mat-select>
+				</mat-input-container>
+			</div>
+
 		</div>
-	</div>
+
+		<span class="sv-menu-spacer"></span>
+
+		<!-- Step 2 Add props -->
+		<div class="sv-menu-tray">
+			<span class="sv-menu-tray-title">Properties (2)</span>
 	
+			<div class="sv-menu-spacer"></div>
+
+			<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+				<button class="menu" (click)="createProperty()">
+					<mat-icon>add</mat-icon>
+				</button>
+				<span class="sv-menu-spacer"></span>
+				<span fxFlex="52">Add</span>
+			</div>
 	
-	<div fxLayout fxLayoutGap="1em" *ngFor="let item of data.item.properties">
-		<mat-input-container>
-			<input #propertyName matInput placeholder="property name" [(ngModel)]="item.key" />
-		</mat-input-container>
-		<mat-input-container>
-			<input #propertyValue matInput placeholder="property value" [(ngModel)]="item.value" />
-		</mat-input-container>
+			<div class="sv-menu-divider-small"></div>
+
+			<div fxLayout="column" dir="ltr">
+				<div fxLayout="column" dir="ltr">
+					<div fxLayout="column" fxLayoutAlign="start stretch" *ngFor="let item of data.item.properties">
+						
+						<span class="sv-menu-spacer"></span>
+						
+						<div class="sv-menu-form-field" style="padding: 10px">
+							
+							<mat-input-container>
+								<span class="sv-menu-form-field-input-label">Key:</span>
+								<input #propertyName matInput [(ngModel)]="item.key" />
+							</mat-input-container>
+							<div class="sv-menu-divider-small"></div>
+							
+							<mat-input-container>
+								<span class="sv-menu-form-field-input-label">Value:</span>
+								<input #propertyValue matInput [(ngModel)]="item.value" />
+							</mat-input-container>
+							<div class="sv-menu-divider-small"></div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<span class="sv-menu-spacer"></span>
+
+		<!-- Step 3 Submit -->
+		<div fxFlex class="sv-menu-tray">
+		
+			<div fxLayout="column" fxLayoutAlign="space-between stretch" dir="ltr">
+				<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+					<!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+					<button fxFlex="30" class="menu" [mat-dialog-close]="data.item">
+						<mat-icon>arrow_right</mat-icon>
+					</button>
+					<span class="sv-menu-tray-title" fxFlex="60">Confirm (3)</span>
+				</div>
+			</div>					
+			
+		</div>
+
 	</div>
-</mat-dialog-content>
-<mat-dialog-actions>
-	<button mat-button mat-dialog-close>Cancel</button>
-	<!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-	<button mat-button [mat-dialog-close]="data.item">Confirm</button>
-</mat-dialog-actions>
+
+</div>

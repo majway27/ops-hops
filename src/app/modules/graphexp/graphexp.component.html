@@ -1,87 +1,203 @@
-<div fxLayout fxFlexFill class="content sv-graphexp">
-	<mat-sidenav-container fxFLex>
-		<mat-sidenav #graphexpSideMenu position="end" fxLayout="column" fxLayoutGap="1.5em">
-			<button mat-mini-fab color="accent" (click)="graphexpSideMenu.toggle()">
-		      <mat-icon>arrow_right</mat-icon>
-		    </button>
-		    <div fxLayout fxLayoutGap="1em">
-		    	<button mat-raised-button (click)="getGraphInfo()">
-		    		Refresh<mat-icon>refresh</mat-icon>
-		    	</button>
-		    	<button mat-raised-button (click)="openNodeEditDialog()">
-					Create<mat-icon>add</mat-icon>
-				</button>
-		    	<span fxFlex></span>
-				<button mat-raised-button (click)="clearGraph()">
-					Clear<mat-icon>clear</mat-icon>
-				</button>
-		    </div>
-		    <mat-checkbox [(ngModel)]="showGraphInfo">Show Graph Info</mat-checkbox>
-		    <mat-checkbox>Show Selection Properties</mat-checkbox>
-		    <mat-checkbox (click)="showNames()">Show Labels</mat-checkbox>
-		    <mat-checkbox>Freeze Graph</mat-checkbox>
-			<section>
-				<div fxLayout>
-					<label>Visible Layers</label>
-		    		<mat-slider min="1" max="5" [(ngModel)]="numberOfLayers" thumbLabel tickInterval="1"></mat-slider>
-				</div>
-		    </section>		    
-		</mat-sidenav>
-		<div fxLayout="column" fxFlexFill>
-			<mat-toolbar fxLayoutGap="1em">
-			    <label>Search</label>
-				<mat-form-field>
-					<mat-select [(ngModel)]="searchField">
-						<mat-optgroup label="Node">
-							<mat-option value="id">id</mat-option>
-							<mat-option *ngFor="let item of nodeProperties | async" [value]="item">{{item}}</mat-option>
-						</mat-optgroup>
-						<mat-optgroup label="Edge">
-							<mat-option value="id">id</mat-option>
-							<mat-option *ngFor="let item of edgeProperties | async" [value]="item">{{item}}</mat-option>
-						</mat-optgroup>
-					</mat-select>
-				</mat-form-field>
-				<mat-form-field>
-					<input matInput name="searchValue" [(ngModel)]="searchValue" placeholder="Id/Keyword">
-				</mat-form-field>
-				<button (click)="search()" mat-mini-fab>
-					<mat-icon>search</mat-icon>
-				</button>
-				<button mat-mini-fab (click)="openNodeEditDialog()">
-					<mat-icon>add</mat-icon>
-				</button>
-			    <span fxFlex></span>
-				<button mat-mini-fab (click)="graphexpSideMenu.toggle()">
-			      <mat-icon>menu</mat-icon>
-			    </button>
-			</mat-toolbar>
+<div fxLayout fxFlexFill class="content sv-graphexp background">
+	<mat-sidenav-container fxFlex>
+
+		<!--Left-side Sliding Overlay Menu, Canvas-centric controls/data -->
+		<mat-sidenav #graphexpLeftSideMenu position="start" disableClose md-disable-backdrop="true" fxLayout="column">
 			
-			<div class="sv-graphexp-content">
-				<div class="sv-graphexp-left-bar">
-					<div *ngIf="showGraphInfo"><br/>
-						<strong>Node Names</strong>
-						<div *ngFor="let item of nodeNames | async">
-							{{item.key}}: {{item.value}}
+			<!-- Menu Header -->
+			<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+				<button (click)="graphexpLeftSideMenu.toggle()">
+					<mat-icon>arrow_left</mat-icon>
+				</button>
+				<span class="sv-menu-spacer"></span>
+				<span class="sv-menu-header">Canvas Tools</span>
+			</div>
+			
+			<mat-divider></mat-divider>
+			
+			<!-- Menu Controls -->
+		    <div fxLayout="column" fxLayoutAlign="start stretch" dir="ltr">
+				
+				<!-- Add/Create -->
+				<div fxFlex class="sv-menu-tray">
+					<div fxLayout="column" fxLayoutAlign="space-between stretch" dir="ltr">
+						
+						<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+							<button fxFlex="30" class="menu" (click)="openNodeEditDialog()">
+								<mat-icon>add</mat-icon>
+							</button>
+							<span fxFlex="50">Create</span>
+						</div>
+
+					</div>					
+				</div>
+
+				<span class="sv-menu-spacer"></span>
+
+				<!-- Search -->
+				<div fxFlex class="sv-menu-tray">
+					<div fxLayout="column" fxLayoutAlign="space-between stretch" dir="ltr">
+						
+						<div fxLayout="column" fxLayoutAlign="space-between" dir="ltr">
+
+							<span class="sv-menu-tray-title">Search</span>
+
+							<span class="sv-menu-spacer"></span>
+
+							<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+								
+								<span>Criteria:</span>
+
+								<mat-form-field fxFlex="58" class="sv-menu-form-field" appearance="outline">
+									<mat-select [(ngModel)]="searchField" 
+									  disableOptionCentering panelClass="sv-menu-form-field-overlay">
+										<mat-optgroup label="Node">
+											<mat-option value="id">id</mat-option>
+											<mat-option *ngFor="let item of nodeProperties | async" [value]="item">{{item}}</mat-option>
+										</mat-optgroup>
+										<mat-optgroup label="Edge">
+											<mat-option value="id">id</mat-option>
+											<mat-option *ngFor="let item of edgeProperties | async" [value]="item">{{item}}</mat-option>
+										</mat-optgroup>
+									</mat-select>
+								</mat-form-field>
+
+							</div>
+							
+							<span class="sv-menu-spacer"></span>
+
+							<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+
+								<button class="menu" (click)="search()">
+									<mat-icon>search</mat-icon>
+								</button>
+
+								<mat-form-field fxFlex="74" class="sv-menu-form-field" appearance="outline">
+									<input matInput name="searchValue" [(ngModel)]="searchValue">
+								</mat-form-field>
+
+							</div>
+
+							<span class="sv-menu-spacer"></span>
+
+							<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+								<button fxFlex="30" class="menu" (click)="clearGraph()">
+									<mat-icon>clear</mat-icon>
+								</button>
+								<span fxFlex="50">Clear</span>
+							</div>
+
+						</div>
+
+					</div>					
+				</div>
+
+				<!-- Layers
+				<span class="sv-menu-spacer"></span>
+				 
+				<div fxFlex class="sv-menu-tray">
+					<div fxLayout="column" fxLayoutAlign="space-between stretch" dir="ltr">
+						<div fxLayout="column" fxLayoutAlign="space-between stretch" dir="ltr">
+							
+							<span>Visible Layers</span>
+							<span class="sv-menu-spacer"></span>
+							<mat-slider 
+								min="1" 
+								max="5" 
+								[(ngModel)]="numberOfLayers" 
+								thumbLabel tickInterval="1"
+								class="sv-menu-slider">
+							</mat-slider>
+							
+						</div>
+					</div>				 	
+				</div>-->
+			
+				<span fxFlex="1" class="sv-menu-spacer"></span>
+
+				<!-- Canvas Node Stats -->
+				<div fxFlex="60" class="sv-menu-tray">
+					<span class="sv-menu-tray-title">Canvas Stats</span>
+					
+					<div *ngFor="let item of nodeNames | async">
+						<span class="sv-menu-tray-content-emphasis">{{item.key}}: </span>
+						{{item.value}}
+					</div>
+
+					<span class="sv-menu-spacer"></span>
+					
+					<div fxLayout="row" fxLayoutAlign="space-between center" dir="ltr">
+						<button fxFlex="30" class="menu" (click)="getGraphInfo()">
+							<mat-icon>refresh</mat-icon>
+						</button>
+						<span fxFlex="50">Refresh</span>
+					</div>
+
+				</div>
+
+		    </div>
+			
+		</mat-sidenav>
+
+		<!-- Right-side Sliding Overlay Menu, Node-centric data -->
+		<mat-sidenav class="wide" #graphexpRightSideMenu position="end" disableClose md-disable-backdrop="true" fxLayout="column">
+			
+			<div fxLayout="row" fxLayoutAlign="space-between center" dir="rtl">
+				<button (click)="graphexpRightSideMenu.toggle()">
+					<mat-icon>arrow_right</mat-icon>
+				</button>
+				<span fxFlex class="sv-menu-spacer"></span>
+				<span fxFlex="30" class="sv-menu-header left">Node Properties</span>				
+			</div>
+			
+			<mat-divider></mat-divider>
+
+			<div fxFlex="90" fxLayout="column" fxLayoutAlign="start stretch" dir="ltr">
+				
+				<div fxFlex class="sv-menu-tray">
+					<span class="sv-menu-tray-title">Selected Node</span>
+					<div *ngIf="selectedNode">
+						<div >
+							<span class="sv-menu-tray-content-emphasis">Label: </span>
+							{{selectedNode.label}}
+						</div>
+						<div>
+							<span class="sv-menu-tray-content-emphasis">Type: </span>
+							{{selectedNode.type}}
+						</div>
+						<div *ngFor="let prop of getFlattenedNodeProperties(selectedNode)">
+							<div>
+								<span class="sv-menu-tray-content-emphasis">{{prop.name}}: </span> 
+								{{prop.value}}
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="sv-graphexp-right-bar">
-					<strong>Selected Node</strong>
-						<div *ngIf="selectedNode">
-							<div>Label: {{selectedNode.label}}</div>
-							<div>Type: {{selectedNode.type}}</div>
-							<div *ngFor="let prop of getFlattenedNodeProperties(selectedNode)">
-								<div>{{prop.name}}: {{prop.value}}</div>
-							</div>
-						</div>
-				</div>
 				
+		    </div>
+		</mat-sidenav>
+
+		<!-- Graph Canvas -->
+		<div fxLayout="column" fxFlexFill>
+
+			<div fxLayout="row" fxLayoutAlign="space-between center" class="sv-toolbar-canvas">
+				<button class="sv-toolbar-canvas-item" (click)="graphexpLeftSideMenu.toggle()">
+					<mat-icon>schema</mat-icon>
+				</button>
+
+				<button class="sv-toolbar-canvas-item" (click)="graphexpRightSideMenu.toggle()">
+					<mat-icon>table_chart</mat-icon>
+				</button>
+			</div>
+			
+			<div class="sv-graphexp-content" fxFlex>				
 				<div class="sv-graphexp" id="sv_graphexp">
 					<svg></svg>
 				</div>
 			</div>
+
 		</div>
+
 	</mat-sidenav-container>
 </div>
 

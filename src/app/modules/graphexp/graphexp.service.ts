@@ -75,7 +75,7 @@ export class GraphexpService {
         + `.aggregate('node').outE().as('edge').inV().where(within('node')).select('edge')`;
       gremlin_query = gremlin_query_nodes + '\n' + gremlin_query_edges + '\n' + '[nodes.toList(),edges.toList()]'
     }
-    console.log(gremlin_query);
+    //console.log(gremlin_query);
     return new Promise<ArrangedGraphData>((resolve, reject) => {
       this.executeQuery(gremlin_query).then(response => {
         resolve(this.arrangeData(response.data));
@@ -105,7 +105,7 @@ export class GraphexpService {
         propString += `, '${kv.key}', '${kv.value}'`;
       });
       const gremlin = `vertex = graph.addVertex(label, '${label}'${propString})`;
-      console.log(`executing query: ${gremlin}`);
+      //console.log(`executing query: ${gremlin}`);
       this.executeQuery(gremlin).then(response => {
         resolve(response.data);
       }, error => {
@@ -120,7 +120,7 @@ export class GraphexpService {
     const properties = item.properties;
     const promise = new Promise<TinkerNode>((resolve, reject) => {
       const gremlin = `edge = g.V(${item.source}).next().addEdge('${item.label}',g.V(${item.target}).next());`;
-      console.log(`executing query: ${gremlin}`);
+      //console.log(`executing query: ${gremlin}`);
       this.executeQuery(gremlin).then(response => {
         resolve(response.data);
       }, error => {
@@ -132,11 +132,16 @@ export class GraphexpService {
   }
 
   public executeQuery(gremlin: string, bindings?: {}): Promise<GremlinQueryResponse> {
+    //console.log('Starting RQuery')
     const promise = new Promise<GremlinQueryResponse>((resolve, reject) => {
+      //console.log('Building RQuery Promise')
       const query = this.gremlinService.createQuery(gremlin, bindings);
       query.onComplete = (response) => {
+        //console.log('RResponse ' + JSON.stringify(response))
         resolve(response);
       };
+      //console.log('Calling Gremlin Service')
+     // console.log('With Query ' + JSON.stringify(query))
       this.gremlinService.sendMessage(query);
     });
     return promise;
